@@ -3,13 +3,18 @@ from typing import TypedDict, List, Optional
 
 class AgentState(TypedDict):
     """
-    Represents the internal shared memory state of our 
-    Autonomous Student Risk & Escalation Agent.
+    The expanded memory state for our reasoning loop.
     """
     student_id: str
-    attendance_percentage: float
-    recent_marks: List[float]
-    calculated_risk_level: Optional[str]  # "Low", "Medium", "Critical"
-    urgency_score: Optional[float]        # Numeric value tracking urgency
-    next_step: Optional[str]              # Used for routing decisions
-    logs: List[str]                       # Audit trail of what the agent has done
+    student_name: Optional[str]
+    student_email: Optional[str]
+    
+    # Raw ingested data components from our PostgreSQL database
+    perception_data: Optional[dict]
+    
+    # Evaluated AI metrics
+    calculated_risk_level: Optional[str]   # "Low", "Medium", or "Critical"
+    reasoning_summary: Optional[str]       # Explanatory text from LLaMA
+    urgency_score: Optional[float]
+    
+    logs: List[str]
