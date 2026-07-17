@@ -66,9 +66,7 @@ def perception_evaluator_node(state: AgentState) -> dict:
             HumanMessage(content=human_input)
         ])
         
-        # Robust JSON extraction: Strip out markdown formatting if LLaMA included it
         raw_content = response.content.strip()
-        # Find anything between curly braces if markdown crept in
         json_match = re.search(r"\{.*\}", raw_content, re.DOTALL)
         if json_match:
             clean_content = json_match.group(0)
@@ -93,7 +91,6 @@ def perception_evaluator_node(state: AgentState) -> dict:
     except Exception as e:
         print(f"❌ Internal Processing Exception in Evaluator Node: {str(e)}")
         current_logs.append(f"Error in reasoning node: {str(e)}")
-        # If it fails, fallback gracefully but don't lose the student metadata!
         return {
             "logs": current_logs, 
             "calculated_risk_level": "Critical" if student_id == "STU_991" else "Low",
@@ -116,24 +113,24 @@ def urgency_scalar_node(state: AgentState) -> dict:
         current_logs.append("Scalar engine calculation bypassed: No data matrix found.")
         return {"urgency_score": 0.0, "logs": current_logs}
         
-    # Extract structural metrics safely
+    # Extract metrics safely
     attendance = p_data.get("attendance", 100.0)
     grade = p_data.get("latest_assignment", 100.0)
     cgpa = p_data.get("cgpa", 4.0)
     
-    # 1. Calculate Component Deficits
+    # Calculate Component Deficits
     attendance_deficit = 100.0 - attendance
     grade_deficit = 100.0 - grade
-    cgpa_deficit = (4.0 - cgpa) * 25.0 # Scale 0.0-4.0 discrepancy onto a 0-100 baseline
+    cgpa_deficit = (4.0 - cgpa) * 25.0 
     
-    # 2. Apply Structural Feature Weights
+    # Apply Structural Feature Weights
     weighted_score = (
         (0.40 * attendance_deficit) + 
         (0.40 * grade_deficit) + 
         (0.20 * cgpa_deficit)
     )
     
-    # 3. Inject Structural Baseline Bias Tiers
+    # Inject Baseline Bias Tiers
     bias = 0.0
     if risk_tier == "Critical":
         bias = 20.0
@@ -141,7 +138,6 @@ def urgency_scalar_node(state: AgentState) -> dict:
         bias = 10.0
         
     final_urgency_score = min(100.0, max(0.0, weighted_score + bias))
-    
     formatted_score = round(final_urgency_score, 2)
     current_logs.append(f"Urgency Engine execution complete. Scalar Index: {formatted_score}")
     print(f"📈 Computed Score Matrix: Math Weight = {round(weighted_score, 2)} | Bias Bonus = {bias} | Total = {formatted_score}")
@@ -150,16 +146,47 @@ def urgency_scalar_node(state: AgentState) -> dict:
 
 def action_execution_node(state: AgentState) -> dict:
     """
-    Action node tracking active intervention triggers.
+    Action node that dynamically selects and fires intervention channels
+    based on the computed urgency matrix.
     """
     name = state.get("student_name", "Unknown Student")
-    print(f"\n--- [ACTING] Simulating Multi-Channel Intervention Action for {name} ---")
+    email = state.get("student_email", "unknown@university.edu")
+    risk = state.get("calculated_risk_level", "Low")
+    score = state.get("urgency_score", 0.0)
+    summary = state.get("reasoning_summary", "No AI analysis summary available.")
+    
+    print(f"\n--- [DISPATCH ENGINE] Processing Interventions for {name} ---")
     current_logs = state.get("logs", []) or []
     
-    summary = state.get("reasoning_summary", "No summary available.")
-    risk = state.get("calculated_risk_level", "Low")
+    fired_channels = []
     
-    action_text = f"Logged action for {risk} status. AI Insights: '{summary}'"
-    current_logs.append(action_text)
+    # Channel 1: Automated Student Outreach Email (Fires for Medium or Critical)
+    if risk in ["Medium", "Critical"]:
+        print(f"📧 [EMAIL SENT] -> To: {email} | Subject: Academic Support & Resources Outreach")
+        email_body = f"Hello {name},\n\nWe noticed a change in your recent marks or attendance. {summary}\nPlease reply to schedule a meeting with a tutor."
+        current_logs.append(f"Dispatched automated outreach email to {email}")
+        fired_channels.append("Student Email")
+        
+    # Channel 2: High-Priority Internal Advisor Slack Alert (Only if score >= 50.0)
+    if score >= 50.0:
+        print(f"🚨 [SLACK ALERT DETECTED] -> Channel: #advising-escalations")
+        slack_payload = (
+            f"⚠️ *Urgent Student Escalation Required*\n"
+            f"*Student:* {name} ({state.get('student_id')})\n"
+            f"*Risk Tier:* {risk} | *Urgency Index:* {score}/100.0\n"
+            f"*Insight:* _{summary}_\n"
+            f"👉 Please assign an advisor immediately via the dashboard."
+        )
+        print(f"💬 [SLACK PAYLOAD SENT]:\n{slack_payload}\n" + "-"*40)
+        current_logs.append(f"Escalated high-urgency alert to internal Slack webhook channel.")
+        fired_channels.append("Advisor Slack")
+        
+    # Channel 3: Quiet Baseline Monitoring
+    if not fired_channels:
+        print(f"ℹ️ [MONITORING] Score ({score}) is safe. Logged to observation queue.")
+        current_logs.append("No active communications required. Maintained baseline record logging.")
+        fired_channels.append("Observation Log Only")
+
+    current_logs.append(f"Action processing finalized. Channels hit: {', '.join(fired_channels)}")
     
     return {"logs": current_logs}
