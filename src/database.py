@@ -24,3 +24,15 @@ def get_db():
         yield db
     finally:
         db.close()
+
+def init_db():
+    """
+    Instructs SQLAlchemy to scan metadata models and physically 
+    generate any missing tables (like syllabus_log) inside PostgreSQL.
+    """
+    # Inline imports ensure that SQLAlchemy registers your models onto Base before table creation
+    from src.models import Student, AcademicMetric, SyllabusLog
+    
+    print("⏳ Syncing database metadata schemas with PostgreSQL...")
+    Base.metadata.create_all(bind=engine)
+    print("✅ Database tables successfully synchronized!")

@@ -1,5 +1,5 @@
 # src/state.py
-from typing import TypedDict, List, Optional
+from typing import Any, TypedDict, List, Optional, Dict
 
 class AgentState(TypedDict):
     """
@@ -18,3 +18,8 @@ class AgentState(TypedDict):
     urgency_score: Optional[float]
     
     logs: List[str]
+
+    # --- New Core Features Fields ---
+    trigger_batch_insight: Optional[bool]
+    batch_failure_rate: Optional[float]
+    missed_topic_data: Optional[Dict[str, Any]]

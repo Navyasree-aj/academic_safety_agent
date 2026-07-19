@@ -43,3 +43,11 @@ class EscalationLog(Base):
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     student = relationship("Student", back_populates="escalations")
+
+class SyllabusLog(Base):
+    __tablename__ = 'syllabus_log'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    topic_covered = Column(String, nullable=False)
+    resource_link = Column(String, nullable=False)
+    lab_assignment = Column(String, nullable=False)
