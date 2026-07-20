@@ -1,7 +1,7 @@
-Academic Safety Guard: Hybrid AI Reasoning Agent
+**Academic Safety Guard: Hybrid AI Reasoning Agent**
 An automated student retention and academic support engine built using FastAPI, LangGraph, and PostgreSQL. The platform evaluates real-time student performance metrics, dynamically generates targeted syllabus remediation packages, and triggers cross-channel notifications when systemic classroom failure metrics are breached.
 
-🏗️ System Architecture
+**System Architecture**
 The engine utilizes a deterministic, linear state pipeline structured via LangGraph to ensure dependable execution logs and execution safety:
 
 Plaintext
@@ -12,7 +12,7 @@ Urgency Scalar Node: Generates risk category evaluations and urgency scores base
 
 Action Executor Node: Synthesizes the dynamic remediation copy, updates final routing logs, and dispatches multi-channel alerts.
 
-🛠️ Prerequisites & Installation
+**Prerequisites & Installation**
 1. Clone and Navigate to the Repository
 Bash
 git clone https://github.com/YOUR_USERNAME/academic_safety_agent.git
@@ -32,7 +32,7 @@ Bash
 pip install -r requirements.txt
 (Ensure fastapi, uvicorn, pydantic, langgraph, and sqlalchemy are present in your requirements file).
 
-🚀 Running the Evaluation Pipeline
+**Running the Evaluation Pipeline**
 Step 1: Initialize the Server
 Boot up the core service engine. The initialization scripts will automatically handle database table synchronization.
 
@@ -75,7 +75,7 @@ JSON
         "remediation_status": "Pending Kit Dispatch"
     },
     "execution_logs": [
-        "Successfully hydrated student state data for Alice Smith",
+        ____"_Successfully hydrated student state data for Alice Smith",
         "Syllabus Remediation triggered for topic: SQL Advanced Joins",
         "Instructor Batch Insight logged! Class Failure Rate: 50.0%",
         "LLM Reasoning complete. Categorized as Critical",
@@ -83,9 +83,11 @@ JSON
         "Injected localized Syllabus Catch-Up Kit for SQL Advanced Joins.",
         "Dispatched automated outreach email to alice@university.edu",
         "Escalated high-urgency alert to internal Slack webhook channel.",
-        "Action processing finalized. Channels hit: Faculty Insight Dashboard, Student Email + Catch-Up Kit, Advisor Slack"
-    ]
+        "Action processing finalized. Channels hit: Faculty Insight Dashboard, Student Email + Catch-Up Kit, Advisor _Slack"_____
+    ]_
 }
+
+
 📂 Project Structure
 Plaintext
 academic_safety_agent/
