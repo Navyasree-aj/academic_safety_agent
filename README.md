@@ -27,6 +27,8 @@ python -m venv venv
 
 # Activate environment (Mac/Linux)
 source venv/bin/activate
+
+
 3. Install Required Components
 Bash
 pip install -r requirements.txt
