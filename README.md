@@ -30,11 +30,14 @@ source venv/bin/activate
 
 
 3. Install Required Components
+
 Bash
 pip install -r requirements.txt
+
 (Ensure fastapi, uvicorn, pydantic, langgraph, and sqlalchemy are present in your requirements file).
 
 **Running the Evaluation Pipeline**
+
 Step 1: Initialize the Server
 Boot up the core service engine. The initialization scripts will automatically handle database table synchronization.
 
@@ -60,7 +63,9 @@ Bash
 curl -X POST "http://127.0.0.1:8000/evaluate" \
      -H "Content-Type: application/json" \
      -d '{"student_id": "STU_991"}'
-📋 Expected Evaluation Output
+
+Expected Evaluation Output
+
 A successful implementation will return a structured JSON response containing calculated risk indices, localized course remediation states, and automated system logs:
 
 JSON
@@ -91,6 +96,7 @@ JSON
 
 
 📂 Project Structure
+
 Plaintext
 academic_safety_agent/
 │
